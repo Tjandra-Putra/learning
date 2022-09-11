@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+</head>
+<body>
+<main>
+    <div class="container my-5">
+        <div class="d-flex justify-content-center flex-column">
+            <div class="display-5 text-center">Badass Todo</div>
+            <div class="wrapper mx-auto mt-4" style="width: 40rem">
+                <form action="/create" method="POST">
+                    <input type="text" class="form-control " placeholder="Add Todos" name="create_input">
+                </form>
+                <div class="table-responsive">
+                <table class="table table-striped mt-4 shadow ">
+                    <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Task</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in db_records %}
+                    <tr>
+                        <th>{{ row.id }}</th>
+                        {% if row.completed == "yes" %}
+                        <td class="text-muted" style="text-decoration: line-through;">{{ row.description }}</td>
+                        {% else %}
+                        <td class="text-dark">{{ row.description }}</td>
+                        {% endif %}
+                        <td>
+                            <!-- Button trigger modal -->
+
+                            <div class="d-flex">
+                                <button type="button" class="btn btn-info px-4 mx-2" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal{{row.id}}">
+                                    Edit
+                                </button>
+                                {% if row.completed == "yes" %}
+                                <!-- COMPLETED TASKS -->
+                                <button type="button" class="btn btn-success px-4 mx-2" disabled>Done</button>
+                                <form action="/delete_todo/{{row.id}}" method="POST">
+                                    <button type="submit" class="btn btn-danger d-inline px-4 mx-2">Delete</button>
+                                </form>
+                                {% else %}
+                                <!-- ON GOING TASKS -->
+                                <form action="/mark_todo/{{row.id}}" method="POST">
+                                    <button type="submit" class="btn btn-success d-inline px-4 mx-2">Done</button>
+                                </form>
+                                <form action="/delete_todo/{{row.id}}" method="POST">
+                                    <button type="submit" class="btn btn-danger d-inline px-4 mx-2">Delete</button>
+                                </form>
+                                {% endif %}
+                            </div>
+
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal{{row.id}}" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Edit Description</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <form action="/edit/{{row.id}}" method="POST">
+
+                                            <div class="modal-body">
+                                                <div class="form-floating">
+                                                <textarea class="form-control" placeholder="Leave a comment here"
+                                                          id="floatingTextarea"
+                                                          name="edit_input">{{row.description}}</textarea>
+                                                    <label for="floatingTextarea">
+                                                        Description
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+                    </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+        crossorigin="anonymous"></script>
+</body>
+</html>
